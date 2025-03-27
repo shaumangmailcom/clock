@@ -62,7 +62,7 @@
 </head>
 <body>
 
-<h1>Clock In/Out</h1>
+<h1>Clock In/Out Form: Clock</h1>
 <div class="clock" id="la-time">Loading LA Time...</div>
 
 <div class="container">
@@ -74,7 +74,7 @@
   </div>
 
   <div class="card">
-    <h2>Roberto</h2>
+    <h2>Helper</h2>
     <button class="clock-in" onclick="logTime('Helper', 'in')">Clock In</button>
     <button class="clock-out" onclick="logTime('Helper', 'out')">Clock Out</button>
     <div class="log" id="log-Helper"></div>
@@ -82,7 +82,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxC7uECdeav7qXCvzZcI1ND3uKhb6_cSphQk71Bt5Otgm1UUWoHkh5Lk_iOeKbrplTs/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdwrCwD1TgsJVU-4cVs-uEa5ZD8kfnTDSlL1itNNgs9IldInyekHvsrPGKhdq9Wfv2aA/exec";
 
   function updateLATime() {
     const options = {
@@ -107,22 +107,20 @@
     logEntry.textContent = `[${displayTime}] ${name} clocked ${action.toUpperCase()}`;
     logDiv.prepend(logEntry);
 
-   const formData = new URLSearchParams();
-formData.append('name', name);
-formData.append('in_or_out', action);
-formData.append('date_time1', dateTime);
+    const formData = new URLSearchParams();
+    formData.append('name', name);
+    formData.append('in_or_out', action);
 
-fetch(SCRIPT_URL, {
-  method: 'POST',
-  body: formData
-})
-
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: formData
+    })
     .then(res => res.json())
     .then(data => {
-      console.log("Submitted to Apps Script:", data);
+      console.log("Submitted to Google Sheet:", data);
     })
     .catch(err => {
-      console.error("Error submitting to Apps Script:", err);
+      console.error("Error submitting to Google Sheet:", err);
     });
   }
 </script>
