@@ -82,7 +82,8 @@
 </div>
 
 <script>
-  // Update LA time clock
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxC7uECdeav7qXCvzZcI1ND3uKhb6_cSphQk71Bt5Otgm1UUWoHkh5Lk_iOeKbrplTs/exec";
+
   function updateLATime() {
     const options = {
       timeZone: 'America/Los_Angeles',
@@ -97,7 +98,6 @@
   setInterval(updateLATime, 1000);
   updateLATime();
 
-  // Logging function + Zoho Creator API Integration
   function logTime(name, action) {
     const dateTime = new Date().toISOString();
     const displayTime = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
@@ -107,27 +107,23 @@
     logEntry.textContent = `[${displayTime}] ${name} clocked ${action.toUpperCase()}`;
     logDiv.prepend(logEntry);
 
-    // Zoho Creator API call
-    fetch('https://www.zohoapis.com/creator/v2/ofirshauman/yuval/form/clock/record', {
+    fetch(SCRIPT_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Zoho-oauthtoken 1000.17c58fa16bc3f39de3bbfc9ffcd5250e.60b444436fe8cd5f5ce5a7dab1a37da8'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        data: {
-          name: name,
-          in_or_out: action,
-          date_time1: dateTime
-        }
+        name: name,
+        in_or_out: action,
+        date_time1: dateTime
       })
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-      console.log("Record added:", data);
+      console.log("Submitted to Apps Script:", data);
     })
-    .catch(error => {
-      console.error("Error adding record:", error);
+    .catch(err => {
+      console.error("Error submitting to Apps Script:", err);
     });
   }
 </script>
