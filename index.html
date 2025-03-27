@@ -62,7 +62,7 @@
 </head>
 <body>
 
-<h1>Clock In/Out</h1>
+<h1>Clock In/Out Form: Clock</h1>
 <div class="clock" id="la-time">Loading LA Time...</div>
 
 <div class="container">
@@ -97,16 +97,38 @@
   setInterval(updateLATime, 1000);
   updateLATime();
 
-  // Logging function
+  // Logging function + Zoho Creator API Integration
   function logTime(name, action) {
-    const time = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+    const dateTime = new Date().toISOString();
+    const displayTime = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+
     const logDiv = document.getElementById('log-' + name);
     const logEntry = document.createElement('div');
-    logEntry.textContent = `[${time}] ${name} clocked ${action.toUpperCase()}`;
+    logEntry.textContent = `[${displayTime}] ${name} clocked ${action.toUpperCase()}`;
     logDiv.prepend(logEntry);
 
-    // Zoho Creator Integration Example
-    // ZOHO.CREATOR.API.addRecord({ formName: "clock", data: { Name: name, Action: action, Time: time } }).then(...);
+    // Zoho Creator API call
+    fetch('https://www.zohoapis.com/creator/v2/ofirshauman/yuval/form/clock/record', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Zoho-oauthtoken 1000.17c58fa16bc3f39de3bbfc9ffcd5250e.60b444436fe8cd5f5ce5a7dab1a37da8'
+      },
+      body: JSON.stringify({
+        data: {
+          name: name,
+          in_or_out: action,
+          date_time1: dateTime
+        }
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Record added:", data);
+    })
+    .catch(error => {
+      console.error("Error adding record:", error);
+    });
   }
 </script>
 
