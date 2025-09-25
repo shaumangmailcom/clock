@@ -73,7 +73,6 @@
 </div>
 
 <div class="container">
- 
   <!-- Jonathan -->
   <div class="card">
     <h2>Jonathan</h2>
@@ -92,7 +91,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec"; // Replace with your actual script URL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8Vxe6ACUYiHQYqZx0BEhdGnSioHXzgM9b7Hhz2k1gOLXB9bwxYZMKKNUWLZ6mcU8fFA/exec"; // Replace with your script URL
   let selectedLocation = null;
 
   function selectLocation(location) {
@@ -112,7 +111,7 @@
     const now = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
     const logDiv = document.getElementById('log-' + name);
     const logEntry = document.createElement('div');
-    logEntry.textContent = `[${now}] ${name} clocked ${action.toUpperCase()}${action === 'in' ? ' at ' + selectedLocation : ''}`;
+    logEntry.textContent = `[${now}] ${name} clocked ${action.toUpperCase()} ${action === 'in' ? 'at ' + selectedLocation : ''}`;
     logDiv.prepend(logEntry);
 
     const formData = new URLSearchParams();
