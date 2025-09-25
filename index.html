@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Clock In/Out</title>
   <style>
     body {
@@ -34,7 +34,7 @@
     }
     button {
       padding: 10px 20px;
-      margin: 10px;
+      margin: 10px 5px;
       font-size: 1em;
       border: none;
       border-radius: 8px;
@@ -46,6 +46,10 @@
     }
     .clock-out {
       background-color: #f44336;
+      color: white;
+    }
+    .location-btn {
+      background-color: #1976d2;
       color: white;
     }
     .log {
@@ -62,27 +66,37 @@
 </head>
 <body>
 
-<h1>Clock In/Out</h1>
+<h1>Clock In/Out – Jonathan & Roberto</h1>
 <div class="clock" id="la-time">Loading LA Time...</div>
+
+<!-- Location Selection -->
+<div style="text-align:center; margin-bottom: 20px;">
+  <strong>Select Location:</strong><br>
+  <button class="location-btn" onclick="selectLocation('12th')">12th</button>
+  <button class="location-btn" onclick="selectLocation('Holt')">Holt</button>
+  <button class="location-btn" onclick="selectLocation('Sycamore')">Sycamore</button>
+  <p id="location-display" style="margin-top: 10px; font-weight: bold; color: #444;"></p>
+</div>
 
 <div class="container">
   <div class="card">
     <h2>Jonathan</h2>
-    <button class="clock-in" onclick="logTime('Jonathan', 'in')">Clock In</button>
+    <button class="clock-in" onclick="logTime('Jonathan', 'in')" disabled>Clock In</button>
     <button class="clock-out" onclick="logTime('Jonathan', 'out')">Clock Out</button>
     <div class="log" id="log-Jonathan"></div>
   </div>
 
   <div class="card">
     <h2>Roberto</h2>
-    <button class="clock-in" onclick="logTime('Helper', 'in')">Clock In</button>
-    <button class="clock-out" onclick="logTime('Helper', 'out')">Clock Out</button>
-    <div class="log" id="log-Helper"></div>
+    <button class="clock-in" onclick="logTime('Roberto', 'in')" disabled>Clock In</button>
+    <button class="clock-out" onclick="logTime('Roberto', 'out')">Clock Out</button>
+    <div class="log" id="log-Roberto"></div>
   </div>
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdwrCwD1TgsJVU-4cVs-uEa5ZD8kfnTDSlL1itNNgs9IldInyekHvsrPGKhdq9Wfv2aA/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdwrCwD1TgsJVU-4cVs-uEa5ZD8kfnTDSlL1itNNgs9IldInyekHvsrPGKhdq9Wfv2aA/exec"; // Use your deployed Apps Script URL
+  let selectedLocation = null;
 
   function updateLATime() {
     const options = {
@@ -93,23 +107,35 @@
       hour12: true,
     };
     const now = new Date().toLocaleTimeString('en-US', options);
-    document.getElementById('la-time').textContent = "Los Angeles Time:" <br> + now;
+    document.getElementById('la-time').textContent = "Los Angeles Time: " + now;
   }
   setInterval(updateLATime, 1000);
   updateLATime();
 
-  function logTime(name, action) {
-    const dateTime = new Date().toISOString();
-    const displayTime = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+  function selectLocation(location) {
+    selectedLocation = location;
+    document.getElementById('location-display').textContent = "Selected Location: " + location;
 
+    // Enable all clock-in buttons
+    document.querySelectorAll('.clock-in').forEach(btn => btn.disabled = false);
+  }
+
+  function logTime(name, action) {
+    if (action === 'in' && !selectedLocation) {
+      alert("Please select a location before clocking in.");
+      return;
+    }
+
+    const displayTime = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
     const logDiv = document.getElementById('log-' + name);
     const logEntry = document.createElement('div');
-    logEntry.textContent = `[${displayTime}] ${name} clocked ${action.toUpperCase()}`;
+    logEntry.textContent = `[${displayTime}] ${name} clocked ${action.toUpperCase()} ${action === 'in' ? 'at ' + selectedLocation : ''}`;
     logDiv.prepend(logEntry);
 
     const formData = new URLSearchParams();
     formData.append('name', name);
     formData.append('in_or_out', action);
+    formData.append('location', selectedLocation || '');
 
     fetch(SCRIPT_URL, {
       method: 'POST',
